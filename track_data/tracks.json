@@ -1,0 +1,11 @@
+{
+  "tracks": [
+    {
+      "id": 1,
+      "name": "Track 1 (4401m)",
+      "length": 4401.9,
+      "start_x": 173.0,
+      "start_z": 13.0
+    }
+  ]
+}

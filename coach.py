@@ -766,10 +766,10 @@ class DrivingCoach:
         # 2) Direct comparison: wrong gear right now
         if not shift_tip and cur_gear > 0 and ref_gear > 0:
             if cur_gear < ref_gear:
-                shift_tip = 'ВИЩЕ \u2191 ' + str(ref_gear)
+                shift_tip = 'SHIFT UP \u2191 ' + str(ref_gear)
                 shift_type = 'up_now'
             elif cur_gear > ref_gear:
-                shift_tip = 'НИЖЧЕ \u2193 ' + str(ref_gear)
+                shift_tip = 'SHIFT DOWN \u2193 ' + str(ref_gear)
                 shift_type = 'down_now'
 
         # 3) Gear speed limit: hitting the ceiling for this gear
@@ -780,12 +780,12 @@ class DrivingCoach:
                 shift_tip = '\u041B\u0406\u041C\u0406\u0422 \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max)) + ')'
                 shift_type = 'up_now'
             elif gl_advice == 'down':
-                shift_tip = 'ПОВІЛЬНО \u2193 ' + str(gl_target)
+                shift_tip = 'DOWNSHIFT \u2193 ' + str(gl_target)
                 shift_type = 'down_now'
 
         # 4) RPM-based upshift fallback
         if not shift_tip and cur_rpm > rpm_max * RPM_UPSHIFT_FRACTION and cur_gear > 0:
-            shift_tip = 'ВИЩЕ \u2191'
+            shift_tip = 'SHIFT UP \u2191'
             shift_type = 'up_now'
 
         # Apply shift tip cooldown
@@ -822,26 +822,26 @@ class DrivingCoach:
         tip_type = ''
 
         if cur_brake > 0.3 and ref_brake < 0.1 and ref_idx >= 0:
-            tip = 'ГАЛЬМУЙ ПІЗНІШЕ'
+            tip = 'BRAKE LATER'
             tip_type = 'brake'
         elif cur_brake < 0.1 and ref_brake > 0.3:
             if cur_speed > ref_speed + 5:
-                tip = 'ГАЛЬМУЙ ЗАРАЗ!'
+                tip = 'BRAKE NOW!'
                 tip_type = 'brake_urgent'
             else:
-                tip = 'ДОБРА ШВИДКІСТЬ'
+                tip = 'GOOD SPEED'
                 tip_type = 'good'
         elif speed_diff < -SPEED_SLOW_THRESHOLD and cur_throttle < 0.5:
-            tip = 'БІЛЬШЕ ГАЗУ'
+            tip = 'MORE THROTTLE'
             tip_type = 'throttle'
         elif speed_diff < -SPEED_SLOW_THRESHOLD:
-            tip = 'ТРИМАЙ ШВИДКІСТЬ'
+            tip = 'HOLD SPEED'
             tip_type = 'speed'
         elif speed_diff > SPEED_FAST_THRESHOLD and cur_brake < 0.1:
-            tip = 'ДОБРА ШВИДКІСТЬ!'
+            tip = 'GOOD SPEED!'
             tip_type = 'good'
         elif cur_throttle < ref_throttle - THROTTLE_DIFF and ref_throttle > 0.5:
-            tip = 'ДОДАЙ ГАЗУ'
+            tip = 'APPLY THROTTLE'
             tip_type = 'throttle'
 
         # Apply cooldown
@@ -877,12 +877,12 @@ class DrivingCoach:
             shift_tip = '\u041B\u0406\u041C\u0406\u0422 \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max)) + ')'
             shift_type = 'up_now'
         elif gl_advice == 'down':
-            shift_tip = 'ПОВІЛЬНО \u2193 ' + str(gl_target)
+            shift_tip = 'DOWNSHIFT \u2193 ' + str(gl_target)
             shift_type = 'down_now'
 
         # RPM fallback
         if not shift_tip and cur_rpm > rpm_max * RPM_UPSHIFT_FRACTION and cur_gear > 0:
-            shift_tip = 'ВИЩЕ \u2191'
+            shift_tip = 'SHIFT UP \u2191'
             shift_type = 'up_now'
 
         # Cooldown
@@ -910,14 +910,14 @@ class DrivingCoach:
                 gear_str = str(sp['to_gear'])
                 if sp['type'] == 'up':
                     if d < 30:
-                        return {'tip': 'ВИЩЕ \u2191 ' + gear_str, 'type': 'up_now'}
+                        return {'tip': 'SHIFT UP \u2191 ' + gear_str, 'type': 'up_now'}
                     else:
-                        return {'tip': '\u2191 ' + gear_str + ' через ' + str(int(d)) + 'м', 'type': 'up'}
+                        return {'tip': '\u2191 ' + gear_str + ' in ' + str(int(d)) + 'm', 'type': 'up'}
                 else:
                     if d < 30:
-                        return {'tip': 'НИЖЧЕ \u2193 ' + gear_str, 'type': 'down_now'}
+                        return {'tip': 'SHIFT DOWN \u2193 ' + gear_str, 'type': 'down_now'}
                     else:
-                        return {'tip': '\u2193 ' + gear_str + ' через ' + str(int(d)) + 'м', 'type': 'down'}
+                        return {'tip': '\u2193 ' + gear_str + ' in ' + str(int(d)) + 'm', 'type': 'down'}
         return None
 
     def _detect_trail_braking(self, x, z):
@@ -952,9 +952,9 @@ class DrivingCoach:
         self._last_trail_brake_pos = (x, z)
 
         if gradual_frames >= 4:
-            return 'ДОБРЕ ТРЕЙЛ!'
+            return 'GOOD TRAIL BRAKING!'
         else:
-            return 'ТРЕЙЛ БРЕЙК!'
+            return 'TRAIL BRAKE!'
 
     def _find_upcoming_brake(self, ref_idx, cur_x, cur_z):
         """Look ahead for upcoming brake zone. Returns dict or None."""

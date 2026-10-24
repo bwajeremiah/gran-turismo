@@ -85,11 +85,11 @@ def _find_corners(ref_samples, num_zones, ref_dists):
 def _zone_label(zone_idx, corners, ref_dists, num_zones, total_dist):
     """Create human-readable zone label."""
     if zone_idx in corners:
-        return 'Пов.' + str(corners[zone_idx])
+        return 'Turn ' + str(corners[zone_idx])
 
     # Straight zone — show distance from start
     dist_at_zone = total_dist * zone_idx / num_zones
-    return str(int(dist_at_zone)) + 'м'
+    return str(int(dist_at_zone)) + 'm'
 
 
 def detect_corners(ref_samples):
@@ -258,19 +258,19 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
                 if brake_diff < -BRAKE_EARLY_DIST:
                     errors.append({
                         'type': 'brake_early',
-                        'detail': 'Гальмував на ' + str(int(abs(brake_diff))) + 'м зарано',
+                        'detail': 'Braked ' + str(int(abs(brake_diff))) + 'm too early',
                         'severity': min(abs(brake_diff) / 30, 1.0),
                     })
                 elif brake_diff > BRAKE_EARLY_DIST:
                     errors.append({
                         'type': 'brake_late',
-                        'detail': 'Гальмував на ' + str(int(brake_diff)) + 'м пізніше',
+                        'detail': 'Braked ' + str(int(brake_diff)) + 'm too late',
                         'severity': 0.3,
                     })
             elif lap_brake_idx >= 0 and ref_brake_idx < 0:
                 errors.append({
                     'type': 'unnecessary_brake',
-                    'detail': 'Гальмував, а еталон ні',
+                    'detail': 'Braked where the reference did not',
                     'severity': 0.6,
                 })
 
@@ -280,13 +280,13 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
             if corner_diff < -SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'slow_corner',
-                    'detail': 'На ' + str(int(abs(corner_diff))) + ' км/г повільніше в повороті',
+                    'detail': str(int(abs(corner_diff))) + ' km/h slower through corner',
                     'severity': min(abs(corner_diff) / 20, 1.0),
                 })
             elif corner_diff > SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'fast_corner',
-                    'detail': 'На ' + str(int(corner_diff)) + ' км/г швидше!',
+                    'detail': str(int(corner_diff)) + ' km/h faster through corner!',
                     'severity': 0,
                 })
 
@@ -298,7 +298,7 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
             if exit_diff < -SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'slow_exit',
-                    'detail': 'На ' + str(int(abs(exit_diff))) + ' км/г повільніше на виході',
+                    'detail': str(int(abs(exit_diff))) + ' km/h slower at exit',
                     'severity': min(abs(exit_diff) / 15, 1.0),
                 })
 
@@ -310,8 +310,8 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
             if wrong_gears and ref_gears:
                 errors.append({
                     'type': 'wrong_gear',
-                    'detail': 'Передача ' + ','.join(str(g) for g in sorted(wrong_gears)) +
-                              ' (етал: ' + ','.join(str(g) for g in sorted(ref_gears)) + ')',
+                    'detail': 'Gear ' + ','.join(str(g) for g in sorted(wrong_gears)) +
+                              ' (reference: ' + ','.join(str(g) for g in sorted(ref_gears)) + ')',
                     'severity': 0.4,
                 })
 
