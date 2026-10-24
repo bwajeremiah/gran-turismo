@@ -47,7 +47,7 @@ Real-time telemetry dashboard and AI driving coach for **Gran Turismo 7**. Captu
 - After each lap, detailed **error report** comparing to your best
 - Track divided into **20 zones**, each analyzed for:
   - **Early/late braking** (with distance in meters)
-  - **Slow corner speed** (delta in km/h)
+  - **Slow corner speed** (delta in mph)
   - **Slow exit speed**
   - **Wrong gear selection**
   - **Unnecessary braking**

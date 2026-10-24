@@ -7,6 +7,7 @@ CORNER_SPEED_DROP = 20  # km/h speed drop to detect a corner
 SPEED_LOSS_THRESHOLD = 5  # km/h slower than reference to flag
 BRAKE_EARLY_DIST = 12  # meters earlier braking to flag
 TIME_LOSS_THRESHOLD = 0.1  # seconds lost to flag a zone
+KMH_TO_MPH = 0.621371  # display conversion only; thresholds stay in km/h
 
 
 def _dist(p1, p2):
@@ -131,7 +132,7 @@ def detect_corners(ref_samples):
                 'num': num,
                 'x': round(ref_samples[best_idx]['x'], 1),
                 'z': round(ref_samples[best_idx]['z'], 1),
-                'min_speed': round(best_speed, 0),
+                'min_speed': round(best_speed * KMH_TO_MPH, 0),
             })
 
     return result
@@ -280,13 +281,13 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
             if corner_diff < -SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'slow_corner',
-                    'detail': str(int(abs(corner_diff))) + ' km/h slower through corner',
+                    'detail': str(int(abs(corner_diff) * KMH_TO_MPH)) + ' mph slower through corner',
                     'severity': min(abs(corner_diff) / 20, 1.0),
                 })
             elif corner_diff > SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'fast_corner',
-                    'detail': str(int(corner_diff)) + ' km/h faster through corner!',
+                    'detail': str(int(corner_diff * KMH_TO_MPH)) + ' mph faster through corner!',
                     'severity': 0,
                 })
 
@@ -298,7 +299,7 @@ def analyze_lap(lap_samples, ref_samples, ref_time_ms):
             if exit_diff < -SPEED_LOSS_THRESHOLD:
                 errors.append({
                     'type': 'slow_exit',
-                    'detail': str(int(abs(exit_diff))) + ' km/h slower at exit',
+                    'detail': str(int(abs(exit_diff) * KMH_TO_MPH)) + ' mph slower at exit',
                     'severity': min(abs(exit_diff) / 15, 1.0),
                 })
 

@@ -777,7 +777,7 @@ class DrivingCoach:
             gl_advice, gl_target = self.gear_limits.get_shift_advice(cur_gear, cur_speed)
             if gl_advice == 'up':
                 g_max = self.gear_limits.gears.get(cur_gear, {}).get('max_speed', 0)
-                shift_tip = '\u041B\u0406\u041C\u0406\u0422 \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max)) + ')'
+                shift_tip = 'LIMIT \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max * 0.621371)) + ' mph)'
                 shift_type = 'up_now'
             elif gl_advice == 'down':
                 shift_tip = 'DOWNSHIFT \u2193 ' + str(gl_target)
@@ -874,7 +874,7 @@ class DrivingCoach:
         gl_advice, gl_target = self.gear_limits.get_shift_advice(cur_gear, cur_speed)
         if gl_advice == 'up':
             g_max = self.gear_limits.gears.get(cur_gear, {}).get('max_speed', 0)
-            shift_tip = '\u041B\u0406\u041C\u0406\u0422 \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max)) + ')'
+            shift_tip = 'LIMIT \u2191 ' + str(gl_target) + ' (max ' + str(int(g_max * 0.621371)) + ' mph)'
             shift_type = 'up_now'
         elif gl_advice == 'down':
             shift_tip = 'DOWNSHIFT \u2193 ' + str(gl_target)

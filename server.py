@@ -22,6 +22,7 @@ from tracks import rename_track
 logger = logging.getLogger('gt7dash')
 
 HEARTBEAT_INTERVAL = 10  # seconds
+KMH_TO_MPH = 0.621371  # browser displays mph
 GT7_PORT = 33739
 STATIC_DIR = Path(__file__).parent / 'static'
 
@@ -143,6 +144,7 @@ async def broadcast_loop():
         last_packet_id = latest_data.get('packet_id', -1)
 
         payload = dict(latest_data)
+        payload['speed'] = round(latest_data.get('speed', 0) * KMH_TO_MPH, 1)
         # Slim down coach data: only send heavy fields periodically
         if 'coach' in payload:
             coach_data = dict(payload['coach'])

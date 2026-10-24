@@ -789,10 +789,10 @@
                     var gMax = c.gear_limits[keys[gi]];
                     var cls = 'gl-item';
                     if (gNum === d.gear) {
-                        if (d.speed >= gMax * 0.97) cls += ' at-limit';
+                        if (d.speed >= gMax * 0.621371 * 0.97) cls += ' at-limit';
                         else cls += ' active';
                     }
-                    glHtml += '<span class="' + cls + '">' + gNum + ':' + Math.round(gMax) + '</span>';
+                    glHtml += '<span class="' + cls + '">' + gNum + ':' + Math.round(gMax * 0.621371) + '</span>';
                 }
                 gearLimitsEl.innerHTML = glHtml;
             }
@@ -829,7 +829,7 @@
             if (c.has_reference && c.ref_speed > 0) {
                 var ds = c.delta_speed;
                 var sSign = ds >= 0 ? '+' : '';
-                deltaSpeed.textContent = sSign + Math.round(ds) + ' km/h';
+                deltaSpeed.textContent = sSign + Math.round(ds * 0.621371) + ' mph';
                 deltaSpeed.className = 'delta-value ' + (ds >= 0 ? 'ahead' : 'behind');
             } else {
                 deltaSpeed.textContent = '-';
@@ -842,7 +842,7 @@
                 if (c.delta_speed > 5) spdClass = 'faster';
                 else if (c.delta_speed < -5) spdClass = 'slower';
                 refSpeedEl.innerHTML = '<span class="ref-spd-val ' + spdClass + '">' +
-                    Math.round(c.ref_speed) + '</span><span class="ref-spd-label">km/h ref.</span>';
+                    Math.round(c.ref_speed * 0.621371) + '</span><span class="ref-spd-label">mph ref.</span>';
             } else {
                 refSpeedEl.innerHTML = '';
             }
@@ -854,7 +854,7 @@
                 if (ba.dist < 30) {
                     brakeAheadEl.innerHTML = '<span class="brake-target">BRAKE to ' + ba.target_speed + '</span>';
                 } else {
-                    brakeAheadEl.innerHTML = '<span class="brake-dist">BRAKE ' + ba.dist + 'm</span> \u2192 <span class="brake-target">' + ba.target_speed + ' km/h</span>';
+                    brakeAheadEl.innerHTML = '<span class="brake-dist">BRAKE ' + ba.dist + 'm</span> \u2192 <span class="brake-target">' + Math.round(ba.target_speed * 0.621371) + ' mph</span>';
                 }
                 brakeAheadEl.className = 'brake-ahead' + imminent;
             } else {
