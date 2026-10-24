@@ -4,6 +4,8 @@ Real-time telemetry dashboard and AI driving coach for **Gran Turismo 7**. Captu
 
 ![Dashboard Preview](docs/preview.png)
 
+Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
+
 ## Features
 
 ### Live Telemetry Dashboard
@@ -84,8 +86,8 @@ On your PS4/PS5: **Settings → Network → View Connection Status** — note th
 
 Or directly:
 
-```bash
-.venv/bin/python server.py --console-ip 192.168.1.100
+```bash(better option)
+.venv/bin/python server.py --console-ip 192.168.1.100    
 ```
 
 ### 4. Open dashboard
@@ -93,7 +95,12 @@ Or directly:
 On your iPad/phone/laptop browser, go to:
 
 ```
-http://YOUR_COMPUTER_IP:8080
+http://YOUR_COMPUTER_IP:8080 
+
+(other device)
+
+use this instead if you wnat to see on the same device it is running on
+http://localhost:8080
 ```
 
 Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).

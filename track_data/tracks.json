@@ -6,6 +6,13 @@
       "length": 4401.9,
       "start_x": 173.0,
       "start_z": 13.0
+    },
+    {
+      "id": 2,
+      "name": "Track 2 (1240m)",
+      "length": 1240.5,
+      "start_x": -374.0,
+      "start_z": 61.0
     }
   ]
 }
