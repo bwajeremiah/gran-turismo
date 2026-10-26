@@ -1,11 +1,8 @@
 # GT7 Telemetry Dashboard & Driving Coach
 
 Real-time telemetry dashboard and AI driving coach for **Gran Turismo 7**. Captures live data from your PlayStation via UDP telemetry, displays it on any device with a browser (optimized for iPad), and analyzes your driving to help you get faster.
-
-![Dashboard Preview](docs/preview.png)
-
+This is 100% free!!
 Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
-
 ## Features
 
 ### Live Telemetry Dashboard
@@ -37,6 +34,7 @@ Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
 - **Speed comparison** — current vs reference at every point
 - **Driving tips**: `BRAKE LATER`, `MORE THROTTLE`, `CARRY MORE SPEED`, `BRAKE NOW!`, `GOOD SPEED!`
 - **Full-screen alerts** — impossible-to-miss colored bars for braking and shifting
+- **Adding audio soon.
 
 ### Gear Shift Assistant
 - **Automatic gear limit learning** — detects max speed per gear for any car
@@ -73,6 +71,9 @@ cd gran-turismo
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
+or 
+use the GitHub desktop app
+to clone
 
 ### 2. Find your PlayStation's IP address
 
@@ -83,13 +84,13 @@ On your PS4/PS5: **Settings → Network → View Connection Status** — note th
 ```bash
 ./run.sh --console-ip YOUR_PS_IP
 ```
-
 Or directly:
-
 ```bash(better option)
-.venv/bin/python server.py --console-ip 192.168.1.100    
+.venv/bin/python server.py --console-ip 192.168.1.100
+dont forget to use your consoles ip   
 ```
-
+if, ".venv/bin/python server.py --console-ip 192.168.1.100"    doesn't work do,
+python server.py --console-ip 192.168.1.100    
 ### 4. Open dashboard
 
 On your iPad/phone/laptop browser, go to:
@@ -102,10 +103,10 @@ http://YOUR_COMPUTER_IP:8080
 use this instead if you wnat to see on the same device it is running on
 http://localhost:8080
 ```
-
 Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
 
 ### 5. Start a race in GT7
+(if you wnat it to already have track data wait for the demo track to run before you start)
 
 The dashboard will automatically connect when you're on track. Telemetry is only sent during gameplay (not in menus).
 
