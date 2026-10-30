@@ -18,6 +18,7 @@ from aiohttp import web
 from gt7_packet import decrypt_packet, parse_packet
 from coach import DrivingCoach
 from tracks import rename_track
+from voice import VoiceCoach
 
 logger = logging.getLogger('gt7dash')
 
@@ -25,15 +26,30 @@ HEARTBEAT_INTERVAL = 10  # seconds
 KMH_TO_MPH = 0.621371  # browser displays mph
 GT7_PORT = 33739
 STATIC_DIR = Path(__file__).parent / 'static'
+VOICE_SCRIPT_TAG = '<script src="/static/voice.js"></script>'
 
 # Shared state
 latest_data: dict = {}
 ws_clients: set[web.WebSocketResponse] = set()
+voice_clients: set[web.WebSocketResponse] = set()
 track_points: list[list[float]] = []  # [[x, z, speed], ...] for track map
 MAX_TRACK_POINTS = 3000
 last_track_lap = -1
 coach = DrivingCoach()
+voice = VoiceCoach()
 prev_vel = None  # for G-force calc
+
+
+async def push_voice(events: list):
+    """Send voice events to every connected browser right away."""
+    msg = json.dumps({'events': events})
+    dead = set()
+    for ws in voice_clients:
+        try:
+            await ws.send_str(msg)
+        except Exception:
+            dead.add(ws)
+    voice_clients.difference_update(dead)
 
 
 class GT7Protocol(asyncio.DatagramProtocol):
@@ -95,6 +111,12 @@ class GT7Protocol(asyncio.DatagramProtocol):
             parsed['wheelspin'] = wheelspin
 
             coach_data = coach.on_telemetry(parsed)
+
+            # Voice calls (every frame, so no tip is missed by the 30Hz broadcast)
+            if voice_clients:
+                voice_events = voice.process(parsed, coach_data, coach)
+                if voice_events:
+                    asyncio.ensure_future(push_voice(voice_events))
 
             # Fuel laps from pit strategy (replaces old simple calc)
             pit = coach_data.get('pit')
@@ -189,9 +211,31 @@ async def ws_handler(request):
     return ws
 
 
+async def voice_ws_handler(request):
+    """WebSocket endpoint that only carries voice-coach events."""
+    ws = web.WebSocketResponse(heartbeat=20)
+    await ws.prepare(request)
+    voice_clients.add(ws)
+    logger.info('Voice client connected (%d total)', len(voice_clients))
+
+    try:
+        async for _ in ws:
+            pass
+    finally:
+        voice_clients.discard(ws)
+        logger.info('Voice client disconnected (%d remaining)', len(voice_clients))
+    return ws
+
+
 async def index_handler(request):
-    """Serve the dashboard HTML."""
-    return web.FileResponse(STATIC_DIR / 'index.html')
+    """Serve the dashboard HTML, with the voice script added automatically."""
+    html = (STATIC_DIR / 'index.html').read_text(encoding='utf-8')
+    if 'voice.js' not in html:
+        if '</body>' in html:
+            html = html.replace('</body>', VOICE_SCRIPT_TAG + '\n</body>', 1)
+        else:
+            html += '\n' + VOICE_SCRIPT_TAG
+    return web.Response(text=html, content_type='text/html', charset='utf-8')
 
 
 async def demo_record_handler(request):
@@ -221,6 +265,7 @@ def create_app() -> web.Application:
     app = web.Application()
     app.router.add_get('/', index_handler)
     app.router.add_get('/ws', ws_handler)
+    app.router.add_get('/ws/voice', voice_ws_handler)
     app.router.add_post('/api/demo/start', demo_record_handler)
     app.router.add_post('/api/demo/stop', demo_stop_handler)
     app.router.add_post('/api/track/rename', track_rename_handler)

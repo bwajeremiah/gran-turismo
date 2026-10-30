@@ -34,7 +34,13 @@ Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
 - **Speed comparison** — current vs reference at every point
 - **Driving tips**: `BRAKE LATER`, `MORE THROTTLE`, `CARRY MORE SPEED`, `BRAKE NOW!`, `GOOD SPEED!`
 - **Full-screen alerts** — impossible-to-miss colored bars for braking and shifting
-- **Adding audio soon.
+- **Voice coaching** — spoken calls using your own recorded clips (see below)
+
+### Voice Coaching
+- Spoken calls for braking, throttle, speed, trail braking, gear shifts and pit stops
+- Plays **your own mp3 recordings** from `static/audio/`
+- Anything without a recording (speeds, distances) falls back to the device's built-in voice
+- Tap the **Voice** button (bottom-left of the dashboard) once to enable audio — browsers, especially iOS, require a tap before they allow sound. Tap again to mute.
 
 ### Gear Shift Assistant
 - **Automatic gear limit learning** — detects max speed per gear for any car
@@ -110,6 +116,28 @@ Find your computer's IP with `ifconfig` (macOS) or `ip addr` (Linux).
 
 The dashboard will automatically connect when you're on track. Telemetry is only sent during gameplay (not in menus).
 
+## Voice Setup
+
+Put `voice.js` in `static/` and your mp3 files in `static/audio/` (create the folder). Use these exact names:
+
+| Category | Files |
+|----------|-------|
+| Braking | `brake_later.mp3`, `brake_now.mp3`, `brake_to.mp3`, `trail_brake.mp3`, `trail_brake_good.mp3` |
+| Throttle / speed | `more_throttle.mp3`, `apply_throttle.mp3`, `hold_speed.mp3`, `good_speed.mp3`, `carry_more_speed.mp3` |
+| Gear shifts | `shift_up.mp3`, `shift_down.mp3`, `upshift_limit.mp3`, `downshift.mp3` |
+| Pit | `pit_in.mp3` |
+| Gear numbers | `1.mp3` through `8.mp3` (`9.mp3`, `10.mp3` optional) |
+| Status (optional) | `recording_lap.mp3`, `comparing.mp3` |
+
+How calls are spoken:
+
+- **Shift calls** — `shift_up` + gear number, e.g. "Shift up ... 4"
+- **Brake zones** — `brake_to` + the target speed in mph (device voice), e.g. "Brake to 85"
+- **Carry more speed** — used instead of "Hold speed" when you are 15+ km/h slower than the reference
+- Missing mp3? That call is spoken by the device voice instead, so nothing is silent
+
+Tuning options (on/off switches, distances, cooldowns) are at the top of `voice.py`.
+
 ## Command Line Options
 
 ```
@@ -136,10 +164,11 @@ PlayStation (GT7)
 server.py ─── gt7_packet.py (decrypt + parse)
     │         coach.py (real-time comparison)
     │         analyzer.py (post-lap analysis)
-    │ WebSocket (30Hz)
+    │         voice.py (turns tips into spoken-clip events)
+    │ WebSocket (30Hz)  +  /ws/voice (voice events)
     ▼
 Browser (iPad/phone/laptop)
-    └── static/index.html + style.css + app.js
+    └── static/index.html + style.css + app.js + voice.js (+ audio/*.mp3)
 ```
 
 ## Tips
